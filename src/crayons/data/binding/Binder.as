@@ -59,7 +59,15 @@ package crayons.data.binding
         
         public function unbindAll():void
         {
-            this.bindings = new Dictionary(useWeakReferences);
+			for(var host:* in bindings)
+			{
+				for each (var binding:Binding in bindings[host])
+				{
+					binding.signal.remove(binding);
+               		binding = null;
+				}
+			}
+            bindings = new Dictionary(useWeakReferences);
         }
 
         

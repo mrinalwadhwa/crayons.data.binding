@@ -89,7 +89,7 @@ package crayons.data.binding
 			_binder = new Binder(false);
 			_binder.bind(_source.sourceProperty1Changed, _target, _targetProperty1Name);
 			Assert.assertThrows(Error, function():void{
-				_binder.bind(_source.sourceProperty2Changed, _target, _targetProperty1Name)	
+				_binder.bind(_source.sourceProperty2Changed, _target, _targetProperty1Name);
 			});
 		}
 
@@ -111,19 +111,30 @@ package crayons.data.binding
 			Assert.assertFalse(_binder.hasBinding(_target, _targetProperty2Name));
 		}
 
+
 		
 		[Test]
-		public function unbind():void
+		public function unbind_has_binding_returns_false():void
 		{
 			_binder.bind(_source.sourceProperty1Changed, _target, _targetProperty1Name);
 			_binder.unbind(_target, _targetProperty1Name);
 			
 			Assert.assertFalse(_binder.hasBinding(_target, _targetProperty1Name));
 		}	
-		
+
+
+
+		[Test]
+		public function unbind_slot_is_removed_from_signal():void
+		{
+			_binder.bind(_source.sourceProperty1Changed, _target, _targetProperty1Name);
+			_binder.unbind(_target, _targetProperty1Name);
+			
+			Assert.assertEquals(0, _source.sourceProperty1Changed.numSlots);
+		}			
 		
 		[Test]
-		public function unbind_all():void
+		public function unbind_all_has_binding_returns_false():void
 		{
 			_binder.bind(_source.sourceProperty1Changed, _target, _targetProperty1Name);
 			_binder.bind(_source.sourceProperty1Changed, _target, _targetProperty2Name);
@@ -131,7 +142,19 @@ package crayons.data.binding
 			
 			Assert.assertFalse(_binder.hasBinding(_target, _targetProperty1Name));
 			Assert.assertFalse(_binder.hasBinding(_target, _targetProperty2Name));
-		}	
+		}
+		
+		
+		
+		[Test]
+		public function unbind_all_allSlots_are_removed():void
+		{
+			_binder.bind(_source.sourceProperty1Changed, _target, _targetProperty1Name);
+			_binder.bind(_source.sourceProperty1Changed, _target, _targetProperty2Name);
+			_binder.unbindAll();
+			
+			Assert.assertEquals(0, _source.sourceProperty1Changed.numSlots);
+		}		
 
 	}
 }
